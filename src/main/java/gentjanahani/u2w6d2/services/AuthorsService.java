@@ -1,6 +1,7 @@
 package gentjanahani.u2w6d2.services;
 
 import gentjanahani.u2w6d2.entities.Authors;
+import gentjanahani.u2w6d2.exceptions.NotFoundException;
 import gentjanahani.u2w6d2.payloads.NewAuthorPayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,15 +13,15 @@ import java.util.List;
 @Slf4j
 public class AuthorsService {
 
-    List<Authors> allAuthors=new ArrayList<>();
+    List<Authors> allAuthors = new ArrayList<>();
 
     //metodo find
-public List<Authors>findAllAuthors(){
-    return this.allAuthors;
-}
+    public List<Authors> findAllAuthors() {
+        return this.allAuthors;
+    }
 
     //metodo save
-    public Authors saveAuthors(NewAuthorPayload payload){
+    public Authors saveAuthors(NewAuthorPayload payload) {
         Authors newAuthor = new Authors(payload.getNome(), payload.getCognome(),
                 payload.getEmail(), payload.getDataDiNascita());
         this.allAuthors.add(newAuthor);
@@ -30,7 +31,39 @@ public List<Authors>findAllAuthors(){
     }
 
     //metodo getById
-    public Authors getAuthorsById(long authorId){
-    
+    public Authors getAuthorsById(long authorId) {
+        Authors found = null;
+        for (Authors author : this.allAuthors) {
+            if (author.getIdAutore() == authorId) found = author;
+        }
+        if (found == null) throw new NotFoundException(authorId);
+        return found;
+    }
+
+    //metodo updatebyid
+    public Authors findAndUpDate(long authorId, NewAuthorPayload payload) {
+        Authors found = null;
+        for (Authors author : this.allAuthors) {
+            if (author.getIdAutore() == authorId) {
+                found = author;
+                found.setName(payload.getNome());
+                found.setSurname(payload.getCognome());
+                found.setEmail(payload.getEmail());
+                found.setDataDiNascita(payload.getDataDiNascita());
+
+            }
+        }
+        if (found == null) throw new NotFoundException(authorId);
+        return found;
+    }
+
+    //metoto findAndDelete
+    public void findByIdAndDelete(long authorId) {
+        Authors found = null;
+        for (Authors author : this.allAuthors) {
+            if (author.getIdAutore() == authorId) found = author;
+        }
+        if (found == null) throw new NotFoundException(authorId);
+        this.allAuthors.remove(found);
     }
 }

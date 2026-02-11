@@ -12,9 +12,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/authors")
 public class AuthorsController {
-private final AuthorsService authorsService;
+    private final AuthorsService authorsService;
 
-@Autowired
+    @Autowired
     public AuthorsController(AuthorsService authorsService) {
         this.authorsService = authorsService;
     }
@@ -22,25 +22,33 @@ private final AuthorsService authorsService;
 
     // 1. GET http://localhost:3002/authors
     @GetMapping
-    public List<Authors> findAuthors(){
+    public List<Authors> findAuthors() {
         return authorsService.findAllAuthors();
     }
 
     // 2. POST http://localhost:3002/authors (+payload)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Authors addNewAuthor(@RequestBody NewAuthorPayload payload){
-    return this.authorsService.saveAuthors(payload);
+    public Authors addNewAuthor(@RequestBody NewAuthorPayload payload) {
+        return this.authorsService.saveAuthors(payload);
     }
 
     // 3. GET http://localhost:3002/authors/{authorsId}
     @GetMapping("/{authorId}")
-    public Authors getAuthorById(@PathVariable long authorId){
-
+    public Authors getAuthorById(@PathVariable long authorId) {
+        return this.authorsService.getAuthorsById(authorId);
     }
 
     // 4. PUT http://localhost:3002/authors/{authorsId} (+payload)
-
+    @PutMapping("/{authorId}")
+    public Authors updateAuthorById(@PathVariable long authorId, @RequestBody NewAuthorPayload payload) {
+        return this.authorsService.findAndUpDate(authorId, payload);
+    }
 
     // 5. DELETE http://localhost:3002/authors/{authorsId}
+    @DeleteMapping("/{authorId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void findAuthorAndDelete(@PathVariable long authorId) {
+        this.authorsService.findByIdAndDelete(authorId);
+    }
 }
